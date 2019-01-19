@@ -28,8 +28,8 @@ class DdqnAgent():
         self.session = tf.Session()
         self.Params = agentParams
         self.BatchHelper = batchHelper
-        self.SetDefaultParameters(action_size)
         self.progressTracker = progressTracker
+        self.SetDefaultParameters(action_size)
         self.trainingModel = self.BuildModel('online')
         self.targetModel = self.BuildModel('target')
         self.InitStatsWriter()
@@ -43,6 +43,7 @@ class DdqnAgent():
         self.current_step_count = 0
         self.total_step_count = 0
         self.total_episodes = 0
+        self.lastMaxReward = self.progressTracker.GetMaxReward()
 
     def InitStatsWriter(self):        
         self.statsWriter = tf.summary.FileWriter(f"tensorboard/{int(time())}")
@@ -269,13 +270,22 @@ class DdqnAgent():
 
     def UpdateAndSave(self):
         self.UpdateTargetModel()
-        self.current_step_count = 0
         #self.SaveModelInfo()
 
     def OnExit(self):
         self.UpdateAndSave()
 
+    def ShouldUpdateAndSave(self):
+        if(True):
+            return self.lastMaxReward != self.progressTracker.GetMaxReward()
+        else:
+            return (self.current_step_count >= self.Params.update_target_rate)
+
     def OnGameOver(self, steps):
         self.total_episodes += 1
-        if(self.current_step_count >= self.Params.update_target_rate):
+        if(self.ShouldUpdateAndSave()):
             self.UpdateAndSave()
+            self.lastMaxReward = self.progressTracker.GetMaxReward()
+            self.current_step_count = 0
+            
+            
