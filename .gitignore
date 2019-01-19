@@ -1,0 +1,4 @@
+*.gif
+*.pyc
+*.txt
+events.out.tfevents.*

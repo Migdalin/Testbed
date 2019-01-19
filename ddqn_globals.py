@@ -1,0 +1,9 @@
+
+
+
+class DdqnGlobals:
+    FRAME_DIMENSIONS = (105, 80)
+    FRAMES_PER_STATE = 4
+    STATE_DIMENSIONS = FRAME_DIMENSIONS + (FRAMES_PER_STATE,)
+    MAX_NOOP = 10
+    
