@@ -36,6 +36,7 @@ class DdqnAgent():
         #self.LoadModelInfo()
         self.session.run(tf.global_variables_initializer())
         self.UpdateTargetModel()
+        self.WriteFixedStats()
     
     def SetDefaultParameters(self, action_size):
         self.action_size = action_size
@@ -165,6 +166,20 @@ class DdqnAgent():
                                   optimizer=optimizer)
         
             return modelInfo
+     
+    def WriteFixedStats(self):
+        summary = tf.Summary(value=[
+                tf.Summary.Value(tag='Learning Rate', simple_value=self.Params.learning_rate),
+                tf.Summary.Value(tag='Fit Frequency', simple_value=self.Params.fit_frequency),
+                tf.Summary.Value(tag='Update Target Rate', simple_value=self.Params.update_target_rate),
+                tf.Summary.Value(tag='Delay Training', simple_value=self.Params.delayTraining),
+                tf.Summary.Value(tag='Memory Size', simple_value=self.BatchHelper.Memory.MaxActiveMemories),
+                tf.Summary.Value(tag='Batch Size', simple_value=self.BatchHelper.BatchSize)
+                ])
+
+        self.statsWriter.add_summary(summary)
+        self.statsWriter.flush()
+        
         
     # Write TF Summaries
     def WriteStats(self, feedDict):
@@ -181,15 +196,7 @@ class DdqnAgent():
                           simple_value=self.progressTracker.GetLongAverageReward())
         
         summary.value.add(tag='Max Reward', simple_value=self.progressTracker.GetMaxReward())
-
         summary.value.add(tag='Epsilon', simple_value=self.epsilon)
-        summary.value.add(tag='Learning Rate', simple_value=self.Params.learning_rate)
-        summary.value.add(tag='Fit Frequency', simple_value=self.Params.fit_frequency)
-        summary.value.add(tag='Update Target Rate', simple_value=self.Params.update_target_rate)
-        summary.value.add(tag='Delay Training', simple_value=self.Params.delayTraining)
-        summary.value.add(tag='Memory Size', simple_value=self.BatchHelper.Memory.MaxActiveMemories)
-        summary.value.add(tag='Batch Size', simple_value=self.BatchHelper.BatchSize)
-
         self.statsWriter.add_summary(summary, self.total_step_count)
 
         self.statsWriter.flush()
