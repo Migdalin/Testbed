@@ -45,7 +45,7 @@ class MiscParameters:
         self.batchSize = batchSize
 
 
-ShortEpisodeParameters = MiscParameters(createGifEveryXEpisodes=500, batchSize = 128)
-LongEpisodeParameters = MiscParameters(createGifEveryXEpisodes=100, batchSize = 128)
+ShortEpisodeParameters = MiscParameters(createGifEveryXEpisodes=5000, batchSize = 128)
+LongEpisodeParameters = MiscParameters(createGifEveryXEpisodes=1000, batchSize = 128)
 
 
